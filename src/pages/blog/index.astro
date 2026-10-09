@@ -1,34 +1,37 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-// Безопасный метод: не крашит сайт, если папка пуста (вернет пустой массив)
-const rawPosts = import.meta.glob('./*.md', { eager: true });
-const posts = Object.values(rawPosts);
----
-<Layout title="Блог | Stepan Portfolio">
-	<h1>Инженерный Блог</h1>
-	<p class="desc">Разборы технических аварий и Post-mortem.</p>
+import { getCollection } from 'astro:content';
 
-	<div class="posts-list">
-		{posts.length === 0 ? (
-			<p class="empty">Пока нет заметок. Первая статья появится здесь после создания .md файла! ✍️</p>
-		) : (
-			posts.map((post: any) => (
-				<article class="post-card">
-					<h2><a href={post.url}>{post.frontmatter.title}</a></h2>
-					<p class="date">{post.frontmatter.date}</p>
-					<p class="preview">{post.frontmatter.description}</p>
-				</article>
-			))
-		)}
-	</div>
+// Достаем все посты из новой папки коллекций
+const posts = await getCollection('blog');
+---
+
+<Layout title="Блог | Stepan Portfolio">
+  <h1>Инженерный Блог</h1>
+  <p class="desc">Разборы технических аварий и Post-mortem.</p>
+
+  <div class="posts-list">
+    {posts.length === 0 ? (
+      <p class="empty">Пока нет заметок. Добавь .md файл в src/content/blog/ ✍️</p>
+    ) : (
+      posts.map((post) => (
+        <article class="post-card">
+          <h2><a href={`/blog/${post.slug}`}>{post.data.title}</a></h2>
+          <p class="date">{post.data.date}</p>
+          <p class="preview">{post.data.description}</p>
+        </article>
+      ))
+    )}
+  </div>
 </Layout>
 
 <style>
-	h1 { margin-bottom: 0.5rem; }
-	.desc { color: var(--text-muted); margin-bottom: 2rem; }
-	.empty { background: var(--card-bg); padding: 2rem; border-radius: 8px; border: 1px dashed var(--border); text-align: center; color: var(--text-muted); }
-	.posts-list { display: flex; flex-direction: column; gap: 1.5rem; }
-	.post-card { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); }
-	.post-card h2 { font-size: 1.3rem; margin-bottom: 0.3rem; }
-	.date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  h1 { margin-bottom: 0.5rem; }
+  .desc { color: var(--text-muted); margin-bottom: 2rem; }
+  .empty { background: var(--card-bg); padding: 2rem; border-radius: 8px; border: 1px dashed var(--border); text-align: center; color: var(--text-muted); }
+  .posts-list { display: flex; flex-direction: column; gap: 1.5rem; }
+  .post-card { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); }
+  .post-card h2 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .preview { color: var(--text-muted); font-size: 0.95rem; }
 </style>

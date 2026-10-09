@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+// 1. Находим все статьи в папке src/content/blog/
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+// 2. Достаем контент текущей статьи
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<!-- 3. Автоматически оборачиваем в стили сайта -->
+<PostLayout frontmatter={post.data}>
+  <Content />
+</PostLayout>
