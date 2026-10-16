@@ -1,12 +1,13 @@
 ---
+const base = import.meta.env.BASE_URL;
 ---
 <header>
 	<div class="nav-container">
-		<a href="/" class="logo">⚡ Stepan.dev</a>
+		<a href="/" class="logo">⚡ alembula.dev</a>
 		<nav>
-			<a href="/">Главная</a>
-			<a href="/projects">Проекты</a>
-			<a href="/blog">Блог</a>
+			<a href={base}>Главная</a>
+			<a href={`{base}/projects`}>Проекты</a>
+			<a href={`{base}/blog`}>Блог</a>
 		</nav>
 	</div>
 </header>

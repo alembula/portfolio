@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 
 // Достаем все посты из новой папки коллекций
 const posts = await getCollection('blog');
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title="Блог | Stepan Portfolio">
@@ -16,7 +17,7 @@ const posts = await getCollection('blog');
     ) : (
       posts.map((post) => (
         <article class="post-card">
-          <h2><a href={`/blog/${post.slug}`}>{post.data.title}</a></h2>
+          <h2><a href={`{base}/blog/${post.slug}`}>{post.data.title}</a></h2>
           <p class="date">{post.data.date}</p>
           <p class="preview">{post.data.description}</p>
         </article>
