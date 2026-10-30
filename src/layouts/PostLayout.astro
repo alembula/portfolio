@@ -1,11 +1,11 @@
 ---
 import Layout from './Layout.astro';
 const { frontmatter } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Layout title={frontmatter.title}>
 	<article class="md-content">
-		<a href={`{base}/blog`} class="back-link">← Назад в блог</a>
+		<a href={`${base}/blog`} class="back-link">← Назад в блог</a>
 		<h1>{frontmatter.title}</h1>
 		<p class="date">📅 {frontmatter.date}</p>
 		<div class="content"><slot /></div>
