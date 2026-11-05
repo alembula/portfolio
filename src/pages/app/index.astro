@@ -1,0 +1,244 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Структура реальных редких активов Telegram
+const gifts = [
+  {
+    id: "mask-01",
+    title: "Хоккейная Маска",
+    icon: "🤿",
+    stars_price: 500,
+    burn_stars: 425,
+    supply_total: 250000,
+    supply_left: 0, // SOLD OUT
+    bg_rarity: "Black",
+    is_legendary: true
+  },
+  {
+    id: "torch-01",
+    title: "Олимпийский Факел",
+    icon: "🔥",
+    stars_price: 150,
+    burn_stars: 120,
+    supply_total: 500000,
+    supply_left: 12400,
+    bg_rarity: "Black",
+    is_legendary: true
+  }
+];
+---
+
+<Layout title="Secret Vault | Telegram App">
+<!-- Официальный SDK мост Telegram -->
+  <script is:inline src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <script is:inline>
+    // Сообщаем Telegram, что приложение загружено и готово к работе
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand(); // Разворачиваем окно на весь экран телефона
+    }
+  </script>
+  <div class="vault-container">
+    <div class="status-badge">
+      <span class="pulse-dot"></span> ТЕНЕВОЙ ШЛЮЗ АКТИВИРОВАН
+    </div>
+    
+    <h1 class="vault-title">Хранилище Активов</h1>
+    <p class="vault-subtitle">Закрытый терминал учета лимитированных подарков и NFT.</p>
+  </div>
+
+    <div class="gifts-grid">
+      {gifts.map((item) => (
+        <div class={`gift-card ${item.bg_rarity === 'Black' ? 'rarity-black' : ''}`}>
+          <div class="gift-header">
+            <span class="gift-icon">{item.icon}</span>
+            <span class="rarity-tag">{item.bg_rarity} Background</span>
+          </div>
+
+          <h3 class="gift-name">{item.title}</h3>
+
+          <div class="gift-stats">
+            <div class="stat-row">
+              <span>Тираж:</span>
+              <span class="stat-val">{item.supply_left === 0 ? "SOLD OUT" : `${item.supply_left} шт.`}</span>
+            </div>
+            <div class="stat-row">
+              <span>Цена покупки:</span>
+              <span class="stat-val stars">⭐️ {item.stars_price}</span>
+            </div>
+            <div class="stat-row">
+              <span>Возврат при сжигании:</span>
+              <span class="stat-val">⭐️ {item.burn_stars}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Блок агента (заполняется скриптом) -->
+    <div class="agent-card">
+      <div class="agent-avatar" id="agent-avatar">🕶</div>
+      <div class="agent-info">
+        <div class="agent-name" id="agent-name">Авторизация...</div>
+        <div class="agent-status" id="agent-status">Подключение к Telegram...</div>
+      </div>
+    </div>
+
+<script is:inline>
+  // Защищенное получение данных профиля
+  const tg = window.Telegram?.WebApp;
+  const user = tg?.initDataUnsafe?.user;
+
+  const nameEl = document.getElementById('agent-name');
+  const statusEl = document.getElementById('agent-status');
+
+  if (user && user.first_name) {
+    // Если открыто внутри Telegram
+    nameEl.textContent = `${user.first_name} ${user.last_name || ''}`;
+    statusEl.textContent = user.username ? `@${user.username}` : `ID: ${user.id}`;
+  } else {
+    // Защитный fallback для обычного браузера на ПК
+    nameEl.textContent = "Агент: босс alembula (Dev Mode)";
+    statusEl.textContent = "Режим симуляции (Вне Telegram)";
+  }
+</script>
+
+<style>
+  .agent-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+  .agent-avatar {
+    font-size: 2rem;
+    background: #0f172a;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #38bdf8;
+  }
+  .agent-name {
+    font-weight: 700;
+    color: #f8fafc;
+    font-size: 1.1rem;
+  }
+  .agent-status {
+    color: #38bdf8;
+    font-size: 0.85rem;
+    font-family: monospace;
+  }
+</style>
+</Layout>
+
+<style>
+  .vault-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+  }
+  .vault-title {
+    font-size: 2rem;
+    color: #f8fafc;
+    margin-bottom: 0.5rem;
+  }
+  .vault-subtitle {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+    .gifts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .gift-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.2rem;
+    text-align: left;
+    transition: transform 0.2s;
+  }
+  /* Тот самый редкий черный фон, который ценится больше всего */
+  .gift-card.rarity-black {
+    background: radial-gradient(circle at top right, #1e1e2e, #09090b);
+    border: 1px solid #eab308; /* Золотая рамка для ценного фона */
+    box-shadow: 0 4px 20px rgba(234, 179, 8, 0.15);
+  }
+  .gift-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .gift-icon {
+    font-size: 2rem;
+  }
+  .rarity-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #000000;
+    color: #eab308;
+    border: 1px solid #eab308;
+    text-transform: uppercase;
+  }
+  .gift-name {
+    color: #f8fafc;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+  .gift-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    border-top: 1px solid #27272a;
+    padding-top: 0.8rem;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    color: #94a3b8;
+  }
+  .stat-val {
+    color: #f8fafc;
+    font-weight: 600;
+  }
+  .stat-val.stars {
+    color: #facc15;
+  }
+</style>
